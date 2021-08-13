@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypegooseModule } from 'nestjs-typegoose'
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -15,7 +16,8 @@ import { TypegooseModule } from 'nestjs-typegoose'
         uri: configService.get('CONNECTION_BD'),
         ...{ useNewUrlParser: true, useUnifiedTopology: true }
       })
-    })
+    }),
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
