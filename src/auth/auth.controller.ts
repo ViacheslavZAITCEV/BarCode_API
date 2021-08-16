@@ -1,22 +1,30 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ALREADY_REGISTRED_USER } from './auth.constatnts';
 import { AuthModel } from './auth.model';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
 
-	constructor(private readonly AuthService: AuthService) { }
+	constructor(private readonly authService: AuthService) { }
 
+	@UsePipes(new ValidationPipe())
 	@Post('create')
-	async create(@Body() dto: Omit<AuthModel, '_id'>) {
-		console.log('route POST: .../api/auth/create')
-
+	async create(@Body() dto: AuthModel) {
+		const oldUser = await this.authService.findUser(dto.login)
+		if (oldUser) {
+			throw new BadRequestException(ALREADY_REGISTRED_USER)
+		}
+		return this.authService.createUser(dto);
 	}
 
 
 	@Post('login')
-	async login(@Body() dto: Omit<AuthModel, '_id'>) {
+	async login(@Body() dto: AuthModel) {
+		console.warn('Rout without loginque!!!')
+		const user = this.authService.findUser(dto.login);
 
+		return null
 	}
 
 
@@ -26,8 +34,8 @@ export class AuthController {
 	}
 
 	@Get('test')
-	async test(@Body() dtodto: Omit<AuthModel, '_id'>) {
-		console.log('route GET: .../api/auth/test')
+	@HttpCode(200)
+	async test() {
 		return 'route GET: .../api/auth/test'
 	}
 

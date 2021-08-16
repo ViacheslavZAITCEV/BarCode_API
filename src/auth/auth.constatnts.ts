@@ -1,0 +1,1 @@
+export const ALREADY_REGISTRED_USER = 'Email is already registred';
