@@ -5,7 +5,7 @@ import { genSalt, hash, compare } from 'bcryptjs'
 import { InjectModel } from 'nestjs-typegoose';
 import { USER_NOT_FOUNDED, WRONG_PASSWORD } from './auth.constatnts';
 import { UserModel } from './user.model';
-import { CreateUserDto } from './dto/createUser.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
 	) { }
 
 
-	async createUser(dto: CreateUserDto): Promise<DocumentType<UserModel>> {
+	async createUser(dto: UserDto): Promise<DocumentType<UserModel>> {
 		const salt = await genSalt(10);
 		const hashPassword = await hash(dto.password, salt)
 		const newUser = await new this.authModel({

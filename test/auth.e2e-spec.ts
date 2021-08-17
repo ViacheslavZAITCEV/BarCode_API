@@ -3,11 +3,11 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Types, disconnect } from 'mongoose';
-import { CreateUserDto } from 'src/auth/dto/createUser.dto';
+import { UserDto } from 'src/auth/dto/user.dto';
 
 // const productId = new Types.ObjectId().toHexString();
 
-const testDto: CreateUserDto = {
+const testDto: UserDto = {
 	login: 'loginTest',
 	password: 'passwordTest'
 }

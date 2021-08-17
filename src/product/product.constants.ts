@@ -1,0 +1,1 @@
+export const BAD_TYPE = 'The type of code is not number'
