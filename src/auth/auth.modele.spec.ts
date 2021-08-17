@@ -1,7 +1,7 @@
-import { AuthModel } from './auth.model';
+import { UserModel } from './user.model';
 
 describe('AuthModele', () => {
   it('should be defined', () => {
-    expect(new AuthModel()).toBeDefined();
+    expect(new UserModel()).toBeDefined();
   });
 });

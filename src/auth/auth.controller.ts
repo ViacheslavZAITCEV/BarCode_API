@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ALREADY_REGISTRED_USER } from './auth.constatnts';
-import { AuthModel } from './auth.model';
+import { UserModel } from './user.model';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -10,7 +10,7 @@ export class AuthController {
 
 	@UsePipes(new ValidationPipe())
 	@Post('create')
-	async create(@Body() dto: AuthModel) {
+	async create(@Body() dto: UserModel) {
 		const oldUser = await this.authService.findUser(dto.login)
 		if (oldUser) {
 			throw new BadRequestException(ALREADY_REGISTRED_USER)
@@ -18,18 +18,17 @@ export class AuthController {
 		return this.authService.createUser(dto);
 	}
 
-
+	@UsePipes(new ValidationPipe())
+	@HttpCode(200)
 	@Post('login')
-	async login(@Body() dto: AuthModel) {
-		console.warn('Rout without loginque!!!')
-		const user = this.authService.findUser(dto.login);
-
-		return null
+	async login(@Body() dto: UserModel) {
+		const user = await this.authService.validateUser(dto.login, dto.password);
+		return this.authService.login(user.login)
 	}
 
 
 	@Post('update')
-	async update(@Body() dtodto: Omit<AuthModel, '_id'>) {
+	async update(@Body() dtodto: Omit<UserModel, '_id'>) {
 
 	}
 
