@@ -32,10 +32,6 @@ export class AuthController {
 
 	}
 
-	@Get('test')
-	@HttpCode(200)
-	async test() {
-		return 'route GET: .../api/auth/test'
-	}
+
 
 }

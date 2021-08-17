@@ -7,13 +7,16 @@ import { UserDto } from '../src/auth/dto/user.dto';
 
 
 const testDto: UserDto = {
-	login: 'loginTest@gmail',
+	login: 'loginTest',
 	password: 'passwordTest'
 }
+
+const testProduct = '5449000214799'
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
 	let createdId: string;
+	let token: string;
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -22,29 +25,32 @@ describe('AppController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+
+		const { body } = await request(app.getHttpServer())
+			.post('/auth/login')
+			.send(testDto)
+
+		token = body.acces_token
 	});
 
 
-	it('/auth/create (POST) succes', async () => {
+	it('/product/findProductByCode (GET) succes', async () => {
 		return request(app.getHttpServer())
-			.post('/auth/create')
-			.send(testDto)
-			.expect(201)
+			.get('/product/findProductByCode/' + testProduct)
+			.set('Authorization', 'Bearer ' + token)
+			.send()
+			.expect(200)
 			.then(({ body }: request.Response) => {
-				createdId = body._id
-				expect(createdId).toBeDefined();
+				expect(body.status_verbose).toBe("product found");
 			});
 	});
 
-	// it('/auth/login (POST)', async () => {
-	// 	return request(app.getHttpServer())
-	// 		.post('/auth/login')
-	// 		.send(testDto)
-	// 		.expect(200)
-	// 		.then(({ body }: request.Response) => {
-	// 			expect(body).toBe(testDto);
-	// 		});
-	// });
+	it('/product/findProductByCode (GET) authorisation fail', async () => {
+		return request(app.getHttpServer())
+			.get('/product/findProductByCode/' + testProduct)
+			.send()
+			.expect(401)
+	});
 
 	afterAll(() => {
 		disconnect();
