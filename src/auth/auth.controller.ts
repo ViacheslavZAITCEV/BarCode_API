@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ALREADY_REGISTRED_USER } from './auth.constatnts';
 import { UserModel } from './user.model';
 import { AuthService } from './auth.service';
@@ -30,6 +30,12 @@ export class AuthController {
 	@Post('update')
 	async update(@Body() dtodto: Omit<UserModel, '_id'>) {
 
+	}
+
+
+	@Delete('delete/:login')
+	async delete(@Param('login') login: string) {
+		return await this.authService.delete(login);
 	}
 
 

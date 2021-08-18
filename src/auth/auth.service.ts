@@ -52,4 +52,14 @@ export class AuthService {
 	}
 
 
+	async delete(login: string) {
+		const user: UserModel = await this.findUser(login);
+		// console.log('route delete, user=', user);
+		if (!user) {
+			throw new UnauthorizedException(USER_NOT_FOUNDED)
+		}
+		return await this.authModel.deleteOne({ login }).exec();
+	}
+
+
 }
