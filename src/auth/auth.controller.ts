@@ -2,12 +2,18 @@ import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Po
 import { ALREADY_REGISTRED_USER } from './auth.constatnts';
 import { UserModel } from './user.model';
 import { AuthService } from './auth.service';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
 
 	constructor(private readonly authService: AuthService) { }
 
+	/**
+	* List of modules to include in the specification
+	*/
+
+	@ApiBody({ type: UserModel })
 	@UsePipes(new ValidationPipe())
 	@Post('create')
 	async create(@Body() dto: UserModel) {
@@ -18,6 +24,7 @@ export class AuthController {
 		return this.authService.createUser(dto);
 	}
 
+	@ApiBody({ type: UserModel })
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Post('login')
@@ -27,12 +34,13 @@ export class AuthController {
 	}
 
 
-	@Post('update')
-	async update(@Body() dtodto: Omit<UserModel, '_id'>) {
+	// @Post('update')
+	// async update(@Body() dtodto: Omit<UserModel, '_id'>) {
 
-	}
+	// }
 
 
+	@ApiBody({ type: 'string' })
 	@Delete('delete/:login')
 	async delete(@Param('login') login: string) {
 		return await this.authService.delete(login);

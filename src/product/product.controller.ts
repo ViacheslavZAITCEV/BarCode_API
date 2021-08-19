@@ -1,4 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { ProductService } from './product.service';
 
@@ -7,6 +8,7 @@ export class ProductController {
 
 	constructor(private readonly productService: ProductService) { }
 
+	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard)
 	@Get('findProductByCode/:code')
 	async findProductByCode(@Param('code') code: string) {
