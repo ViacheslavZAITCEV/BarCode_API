@@ -15,7 +15,7 @@ export class ProductController {
  * only authenticated access to the route
  * return response of openfoodfacts.org
  * @param code code of the product to find in openfoodfacts.org
- * @returns Type.Object {acces_token: string}
+ * @returns Type.Object {}
  */
 	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard)
