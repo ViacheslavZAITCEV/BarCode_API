@@ -13,7 +13,6 @@ const testDto: UserDto = {
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
-	let createdId: string;
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,10 +32,16 @@ describe('AppController (e2e)', () => {
 			.post('/auth/create')
 			.send(testDto)
 			.expect(201)
-			.then(({ body }: request.Response) => {
-				createdId = body._id
-				expect(createdId).toBeDefined();
+			.then(({ text }: request.Response) => {
+				expect(text).toBeDefined();
 			});
+	});
+
+	it('/auth/create (POST) fail: bad request', async () => {
+		return request(app.getHttpServer())
+			.post('/auth/create')
+			.send({ login: 'loginTest' })
+			.expect(400)
 	});
 
 	it('/auth/create (POST) fail: login is exist', async () => {

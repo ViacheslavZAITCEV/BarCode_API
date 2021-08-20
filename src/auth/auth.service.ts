@@ -15,7 +15,12 @@ export class AuthService {
 		private readonly jwtService: JwtService
 	) { }
 
-
+	/**
+	 * Service createUser
+	 * Checks if the user is registred
+	 * @param dto new User
+	 * @returns response MondoDB
+	 */
 	async createUser(dto: UserDto): Promise<DocumentType<UserModel>> {
 		const salt = await genSalt(10);
 		const hashPassword = await hash(dto.password, salt)
@@ -31,7 +36,14 @@ export class AuthService {
 		return this.authModel.findOne({ login }).exec();
 	}
 
-
+	/**
+	 * Service validateUser
+	 * Checks if the user is registred
+	 * Checks if the password is correct
+	 * @param login
+	 * @param password
+	 * @returns Type.Object { login: string }
+	 */
 	async validateUser(login: string, password: string): Promise<Pick<UserModel, 'login'>> {
 		const user: UserModel = await this.findUser(login);
 		if (!user) {
@@ -44,6 +56,11 @@ export class AuthService {
 		return { login: user.login }
 	}
 
+	/**
+ * Signature service
+ * @param login
+ * @returns JWT token
+ */
 	async login(login: string) {
 		const payload = { login };
 		return {
@@ -51,10 +68,14 @@ export class AuthService {
 		}
 	}
 
-
+	/**
+	 * Service for deleting a record from MongoDB
+	 * Checks if the user is registred
+	 * @param login
+	 * @returns response MongoDB
+	 */
 	async delete(login: string) {
 		const user: UserModel = await this.findUser(login);
-		// console.log('route delete, user=', user);
 		if (!user) {
 			throw new UnauthorizedException(USER_NOT_FOUNDED)
 		}

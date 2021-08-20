@@ -1,18 +1,23 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, HttpCode, Param, Post, Type, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ALREADY_REGISTRED_USER } from './auth.constatnts';
 import { UserModel } from './user.model';
 import { AuthService } from './auth.service';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from './guards/jwt.auth.guard';
 
 @Controller('auth')
 export class AuthController {
 
 	constructor(private readonly authService: AuthService) { }
 
-	/**
-	* List of modules to include in the specification
-	*/
 
+	/**
+	 * Route /create
+	 * Checks if the user is registred
+	 * @param dto new User
+	 * @returns login of the user
+	 * @returns 400 if the user is registred
+	 */
 	@ApiBody({ type: UserModel })
 	@UsePipes(new ValidationPipe())
 	@Post('create')
@@ -21,9 +26,17 @@ export class AuthController {
 		if (oldUser) {
 			throw new BadRequestException(ALREADY_REGISTRED_USER)
 		}
-		return this.authService.createUser(dto);
+		const user = await this.authService.createUser(dto);
+		return user.login;
 	}
 
+
+	/**
+	 * Route /login
+	 * return JWT token if autentification is correct
+	 * @param dto user
+	 * @returns Type.Object {acces_token: string}
+	 */
 	@ApiBody({ type: UserModel })
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
@@ -34,13 +47,28 @@ export class AuthController {
 	}
 
 
+	/**
+	 * Route /update
+	 * only authenticated access to the route
+	 * find login by autentification data
+	 * update data in MongoDB
+	 * return JWT token if recorded is updated
+	 * @param dto user
+	 * @returns Type.Object {acces_token: string}
+	 */
+	// @UseGuards(JwtAuthGuard)
+	// @UsePipes(new ValidationPipe())
 	// @Post('update')
-	// async update(@Body() dtodto: Omit<UserModel, '_id'>) {
+	// async update(@Body() dto: UserModel) {
 
 	// }
 
-
-	@ApiBody({ type: 'string' })
+	/**
+	 * Route /delete
+	 * @param login 
+	 * @returns response MongoDB
+	 */
+	@ApiParam({ name: 'login', type: 'string' })
 	@Delete('delete/:login')
 	async delete(@Param('login') login: string) {
 		return await this.authService.delete(login);
