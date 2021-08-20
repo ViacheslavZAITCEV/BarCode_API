@@ -68,6 +68,19 @@ export class AuthService {
 		}
 	}
 
+
+
+	/**
+	 * Service for deleting a record from MongoDB
+	 * Checks if the user is registred
+	 * @param login
+	 * @returns response MongoDB
+	 */
+	async update(loginOld: string, login: string, password: string) {
+		return await this.authModel.updateOne({ login: loginOld }, { login, password }).exec();
+	}
+
+
 	/**
 	 * Service for deleting a record from MongoDB
 	 * Checks if the user is registred

@@ -4,15 +4,26 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Types, disconnect } from 'mongoose';
 import { UserDto } from '../src/auth/dto/user.dto';
+import { UpdateUserDto } from 'src/auth/dto/updateUser.dto';
 
 
 const testDto: UserDto = {
 	login: 'loginTest@gmail',
 	password: 'passwordTest'
 }
+const test2Dto: UserDto = {
+	login: 'loginTest@gmail',
+	password: 'passwordTest_Updated'
+}
+
+const updateDto: UpdateUserDto = {
+	oldUser: testDto,
+	newUser: test2Dto
+}
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
+	let token: string;
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -64,6 +75,7 @@ describe('AppController (e2e)', () => {
 			.send(testDto)
 			.expect(200)
 			.then(({ body }: request.Response) => {
+				token = body.acces_token;
 				expect(body.acces_token).toBeDefined();
 			});
 	});
@@ -82,6 +94,51 @@ describe('AppController (e2e)', () => {
 		return request(app.getHttpServer())
 			.post('/auth/login')
 			.send({ ...testDto, password: 'loginTest' })
+			.expect(401)
+			.then(({ body }: request.Response) => {
+				expect(body.message).toBe('Password is wrong');
+			});
+	});
+
+
+	//
+	// routes 'update'
+	//
+
+	it('/auth/update (PUT) succes', async () => {
+		return request(app.getHttpServer())
+			.put('/auth/update')
+			.set('Authorization', 'Bearer ' + token)
+			.send(updateDto)
+			.expect(201)
+			.then(({ body }: request.Response) => {
+				expect(body.nModified).toBe(1);
+			});
+	});
+
+	it('/auth/update (PUT) fail Authorization', async () => {
+		return request(app.getHttpServer())
+			.put('/auth/update')
+			.send(updateDto)
+			.expect(401)
+	});
+
+	it('/auth/update (PUT) fail Email not founded', async () => {
+		return request(app.getHttpServer())
+			.put('/auth/update')
+			.set('Authorization', 'Bearer ' + token)
+			.send({ ...updateDto, oldUser: { login: '' } })
+			.expect(401)
+			.then(({ body }: request.Response) => {
+				expect(body.message).toBe('Email not founded');
+			});
+	});
+
+	it('/auth/update (PUT) fail Password is wrong', async () => {
+		return request(app.getHttpServer())
+			.put('/auth/update')
+			.set('Authorization', 'Bearer ' + token)
+			.send({ ...updateDto, oldUser: { ...testDto, password: 'loginTest' } })
 			.expect(401)
 			.then(({ body }: request.Response) => {
 				expect(body.message).toBe('Password is wrong');
