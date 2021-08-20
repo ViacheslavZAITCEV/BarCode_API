@@ -38,12 +38,31 @@ $ npm run start:prod
 # e2e tests
 $ npm run test:e2e
 ```
+  
+## Create an account
+
+Send your login and password to root api/auth/create 
+
+method: POST
+route: api/auth/create
+body: {login: newLogin, password: newPassword}
+
+## Get a JWT Token
+
+Send your login and password registered on the root api/auth/login
+
+```bash
+method: POST
+route: api/auth/login
+body: {login: yourLogin, password: yourPassword}
+```
+api will return an authentication JWT token 
 
 ## Authorization
 
-Authorization is implemented through the JVT token
+Authorization is implemented through the JWT token
 
-API returns JVT token after successful authorization of root (api/login)
+API returns JWT token after successful authorization of root (api/auth/login)
 Roots requiring authorization:
 /api/auth/update
 /api/findProductByCode/
@@ -53,6 +72,32 @@ for example for JWT token tokePart1.tokenPart2.tokenPart3
 
 ```bash
 Bearer tokePart1.tokenPart2.tokenPart3
+```
+
+## Update an account
+
+Send your oldLogin, oldPassword, newLogin and newPasswod on the root api/auth/update
+
+```bash
+method: POST
+route: api/auth/update
+body: {
+  oldUser: {
+    login: oldLogin,
+    password: oldPassword},
+  newUser: {
+    login: newLogin,
+    password: newPassword},
+  }
+```
+
+## Get product content by barcode
+
+method: GET
+route: api/product/findProductByCode/:codebar
+
+```bash
+http://www.myappbarcode.io/api/product/findProductByCode/5449000214799
 ```
 
 
