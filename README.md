@@ -59,4 +59,3 @@ Bearer tokePart1.tokenPart2.tokenPart3
 ## Stay in touch
 
 - Author - [Viacheslav ZAITCEV](https://github.com/ViacheslavZAITCEV)
-- Docsite - [https://nestjs.com](https://nestjs.com/)
