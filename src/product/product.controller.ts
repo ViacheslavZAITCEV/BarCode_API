@@ -8,6 +8,15 @@ export class ProductController {
 
 	constructor(private readonly productService: ProductService) { }
 
+
+
+	/**
+ * Route /findProductByCode
+ * only authenticated access to the route
+ * return response of openfoodfacts.org
+ * @param code code of the product to find in openfoodfacts.org
+ * @returns Type.Object {acces_token: string}
+ */
 	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard)
 	@Get('findProductByCode/:code')
@@ -16,7 +25,6 @@ export class ProductController {
 		const product = await this.productService.getProductByCode(code);
 		if (typeof product !== 'string') {
 			res = product.toString()
-			// console.log('response=', product.toString())
 		} else {
 			res = product
 		}
