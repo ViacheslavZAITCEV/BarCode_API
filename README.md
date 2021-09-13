@@ -16,7 +16,6 @@
 API to search for information about a food product by barcode.
 API uses openfoodfacts.org database
 
-API written as a technical [test](https://github.com/InnovOrder/software-technical-tests)
 
 
 ## Running the app
